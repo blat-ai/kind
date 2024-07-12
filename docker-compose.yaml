@@ -1,0 +1,21 @@
+services:
+  kubernetes:
+    image: blat/kind:latest
+    privileged: true
+    volumes:
+      - kubeconfig:/root/.kube
+    healthcheck:
+      test: ["CMD", "kubectl", "get", "nodes"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+  kubectl:
+    image: bitnami/kubectl:latest
+    depends_on:
+      kubernetes:
+        condition: service_healthy
+    volumes:
+      - kubeconfig:/.kube
+
+volumes:
+     kubeconfig:
